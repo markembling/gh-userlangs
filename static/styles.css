@@ -5,3 +5,10 @@
 .img-thumbnail.pull-right {
     margin-left: 10px;
 }
+
+#me-logo {
+    color: #B0B0B0;
+    font-size: 36px;
+    margin-top: -6px;
+    margin-right: 8px;
+}

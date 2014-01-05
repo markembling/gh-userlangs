@@ -4,6 +4,7 @@
     <title>Languages on GitHub</title>
 
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for("static", filename="me-font/me-font.css") }}">
     <link rel="stylesheet" href="{{ url_for("static", filename="styles.css") }}">
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
@@ -33,6 +34,9 @@
 
         <footer>
             <hr>
+            <div id="me-logo" class="pull-left">
+                <span class="me-logo-solid"></span>
+            </div>
             <p class="pull-left">
                 By <a href="http://markembling.info/">Mark Embling</a>.<br>
                 Code on <a href="#">GitHub</a>.
