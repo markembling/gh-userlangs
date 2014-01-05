@@ -52,7 +52,7 @@ def get_all_languages(repos):
 @app.route("/")
 def index():
     if not "github_access_token" in session:
-        return redirect(url_for('intro'))
+        returnredirect(url_for('intro'))
 
     try:
         repos = get_gh_repos()
