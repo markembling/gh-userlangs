@@ -1,5 +1,7 @@
 from __future__ import division
 import os
+import json
+from collections import OrderedDict
 from flask import Flask, request, session, render_template, redirect, url_for
 from flask.ext.github import GitHub
 
@@ -26,22 +28,25 @@ def get_repo_languages(repo):
 
 def get_all_languages(repos):
     results = {}
+    total_bytes = 0
+
+    # Get all the raw data
     for r in repos:
         langs = get_repo_languages(r)
         for k, v in langs.items():
             if not k in results:
-                results[k] = v
+                results[k] = {}
+                results[k]["bytes"] = v
             else:
-                results[k] += v
-    return results
+                results[k]["bytes"] += v
+            total_bytes += v
 
-def get_language_percents(langs):
-    results = {}
-    total = sum(langs.values())
-    for k, v in langs.items():
-        results[k] = v / total * 100
-    return results
+    # Calculate percentages
+    for k, v in results.items():
+        results[k]["percent"] = v["bytes"] / total_bytes * 100
 
+    return OrderedDict(sorted(results.items(), key=lambda x: x[1]["bytes"], 
+                                               reverse=True))
 
 # View functions
 @app.route("/")
@@ -51,11 +56,9 @@ def index():
 
     repos = get_gh_repos()
     langs = get_all_languages(repos)
-    langs_percents = get_language_percents(langs)
 
     return render_template("index.html", repos=repos,
-                                         langs=langs,
-                                         langs_percents=langs_percents)
+                                         langs=json.dumps(langs))
 
 @app.route("/intro")
 def intro():
