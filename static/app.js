@@ -56,6 +56,16 @@
         });
     };
 
+    function updateSubtitle(username, repoCount) {
+        var subtitle = username + " (" + repoCount;
+        if (repoCount == 1) {
+            subtitle += " repository)";
+        } else {
+            subtitle += " repositories)";
+        }
+        $('#subtitle').text(subtitle);
+    }
+
     // Render the overall table containing all languages.
     function renderOverallTable(data) {
         for (var key in data) {
@@ -111,7 +121,7 @@
     function update() {
         $.getJSON("data")
             .done(function(d) {
-                // TODO: update username, update repo count
+                updateSubtitle(d["user"], d["repo_count"]);
 
                 renderOverallTable(d["langs"]);
 
