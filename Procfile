@@ -1,0 +1,1 @@
+web: gunicorn gh_userlangs:app
