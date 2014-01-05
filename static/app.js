@@ -25,15 +25,19 @@
         return (bytes / Math.pow(1024, i)).toFixed(2) + ' ' + sizes[i];
     };
 
-    // Splits the data into two sets ('main' and 'other') and adds labels.
+    // Splits/copies the data into three sets (one per chart)and adds labels.
     function splitData(rawData) {
         var main = [];
         var other = [];
+        var repos = []
         var otherValue = 0;
         var otherPercent = 0;
 
         $.each(rawData, function(i, v) {
+            // Add label
             v["label"] = i;
+            
+            // Add to main or other graph (for first tab)
             if (v["percent"] >= 0.5) {
                 main.push(v);
             } else {
@@ -41,11 +45,14 @@
                 otherValue += v["bytes"]
                 otherPercent += v["percent"]
             }
+
+            // Add to repos graph
+            repos.push(v);
         });
 
         main.push({ label: "Other", bytes: otherValue, percent: otherPercent });
 
-        return { main: main, other: other };
+        return { main: main, other: other, repos: repos };
     };
 
     // Loops over the data and adds a 'color' field.
@@ -79,6 +86,14 @@
         });
     };
 
+    // Takes a data set and tweaks it to render a chart of languages seen
+    // in repositories.
+    function dataToRepoGraphData(data) {
+        return $.map(data, function(v) {
+            return { value: v["repos"].length, color: v["color"] };
+        });
+    };
+
     function updateSubtitle(username, repoCount) {
         var subtitle = username + " (" + repoCount;
         if (repoCount == 1) {
@@ -87,13 +102,12 @@
             subtitle += " repositories)";
         }
         $('#subtitle').text(subtitle);
-    }
+    };
 
     // Render the overall table containing all languages.
     function renderOverallTable(data) {
         for (var key in data) {
             var vals = data[key];
-
 
             var $tbody = $('#overall tbody');
 
@@ -112,8 +126,8 @@
     };
 
     // Render a chart
-    function renderGraph(data, $pie, $legend) {
-        var ctx = $pie.get(0).getContext("2d");
+    function renderGraph(data, $canvas, $legend) {
+        var ctx = $canvas.get(0).getContext("2d");
 
         var opts = {
             segmentStrokeWidth: 1,
@@ -140,6 +154,43 @@
         });
     };
 
+    function renderRepoGraph(data, $canvas, $legend) {
+        var graphData = dataToRepoGraphData(data);
+
+        // Find largest language for scale
+        var max = 0;
+        $.each(graphData, function(i, v){
+            if (v.value > max) max = v.value;
+        });
+
+        var ctx = $canvas.get(0).getContext("2d");
+        var opts = {
+            scaleOverride: true,
+            scaleStartValue: 0,
+            scaleSteps: Math.ceil(max / 2),
+            scaleStepWidth: 2,
+            segmentStrokeWidth: 1,
+            animateRotate: false
+        };
+        new Chart(ctx).PolarArea(graphData, opts);
+
+        // Legend
+        $.each(data, function(i, v) {
+            var $tbody = $legend.find('tbody');
+
+            var $row = $("<tr></tr>");
+            var $swatchCell = $("<td></td>");
+            $swatchCell.css('background-color', v["color"])
+                       .width(60)
+            $row.append($swatchCell)
+                .append("<td>" + v["label"] + "</td>")
+                .append("<td>" + v["repos"].length + 
+                    (v["repos"].length == 1 ? " repository" : " repositories")+ "</td>")
+
+            $tbody.append($row);
+        });
+    };
+
     function message(text) {
         var $warn = $('<div class="alert alert-warning"></div>');
         $warn.html(text);
@@ -157,10 +208,12 @@
                 $('#main-content').show();
 
                 updateSubtitle(d["user"], d["repo_count"]);
+                var graphData = splitData(d["langs"]);
 
+                // Table tab
                 renderOverallTable(d["langs"]);
 
-                var graphData = splitData(d["langs"]);
+                // Percentage chart tab
                 var mainColoured = generateColours(graphData.main, false, true);
                 renderGraph(mainColoured, $('#pie'), $('#legend'));
                 if (graphData.other.length > 0) {
@@ -168,6 +221,10 @@
                     renderGraph(otherColoured, $('#pie-other'), $('#legend-other'));
                     $('#other').show();
                 };
+
+                // Repositories chart tab
+                var repoColoured = generateColours(graphData.repos, false, false);
+                renderRepoGraph(repoColoured, $('#chart-repos'), $('#legend-repos'));
             })
             .fail(function(jqXHR) {
                 var statusCode = jqXHR.status;

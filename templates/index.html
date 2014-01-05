@@ -15,7 +15,8 @@
 
 <div id="main-content" style="display:none">
     <ul class="nav nav-tabs">
-        <li class="active"><a href="#charts" data-toggle="tab">Charts</a></li>
+        <li class="active"><a href="#charts" data-toggle="tab">Volume of Code</a></li>
+        <li><a href="#repos" data-toggle="tab">Appearances</a></li>
         <li><a href="#table" data-toggle="tab">Table</a></li>
     </ul>
 
@@ -71,6 +72,28 @@
                 </div>
             </div>
 
+        </div>
+
+        <div class="tab-pane" id="repos">
+            <div class="row">
+                <div class="col-md-7">
+                    <canvas id="chart-repos" width="520" height="520"></canvas>
+                </div>
+                <div class="col-md-5">
+                    <table id="legend-repos" class="table">
+                        <thead>
+                            <tr>
+                                <th>&nbsp;</th>
+                                <th>Language</th>
+                                <th>Seen in</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
         <div class="tab-pane" id="table">
