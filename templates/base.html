@@ -12,15 +12,22 @@
 </head>
 <body>
     <div class="container">
+        <div class="page-header">
+            <h1>
+                <a href="{{ url_for("index") }}">GitHub Language Statistics</a>
+                <small>{% block subtitle %}{% endblock %}</small>
+            </h1>
+        </div>
+
         {% block content %}{% endblock %}
 
         <footer>
             <hr>
-            <p>
+            <p class="pull-left">
                 By <a href="http://markembling.info/">Mark Embling</a>.<br>
                 Code on <a href="#">GitHub</a>.
             </p>
-            <p><strong>Note:</strong> this little project is not affiliated with or endorsed 
+            <p class="pull-right"><strong>Note:</strong> this little project is not affiliated with or endorsed 
             by GitHub in any way. It just uses their API.</p>
         </footer>
     </div>
