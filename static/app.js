@@ -17,6 +17,14 @@
         return phrases[rand];
     };
 
+    // Clever little function (modified a bit) thanks to ThomasR at 
+    // http://codeaid.net/javascript/convert-size-in-bytes-to-human-readable-format-(javascript)
+    function bytesToSize(bytes) {
+        var sizes = ['', 'KB', 'MB', 'GB', 'TB'];
+        var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+        return (bytes / Math.pow(1024, i)).toFixed(2) + ' ' + sizes[i];
+    };
+
     // Splits the data into two sets ('main' and 'other') and adds labels.
     function splitData(rawData) {
         var main = [];
@@ -92,7 +100,7 @@
             var $row = $("<tr></tr>");
             $row.append("<td>" + key + "</td>")
                 .append("<td>" + vals["percent"].toFixed(3) + "%</td>")
-                .append("<td>" + vals["bytes"] + "</td>")
+                .append("<td>" + bytesToSize(vals["bytes"]) + "</td>")
                 .append('<td><span class="tip" data-toggle="tooltip" title="' + vals["repos"].join(",<br>") + '">' + 
                     vals["repos"].length + (vals["repos"].length == 1 ? " repository" : " repositories") + 
                     "</span></td>")
@@ -126,7 +134,7 @@
             $row.append($swatchCell)
                 .append("<td>" + v["label"] + "</td>")
                 .append("<td>" + v["percent"].toFixed(3)+ "%</td>")
-                .append("<td>" + v["bytes"] + "</td>")
+                .append("<td>" + bytesToSize(v["bytes"]) + "</td>")
 
             $tbody.append($row);
         });
