@@ -2,6 +2,20 @@
 
     "use strict";
 
+    // Get an appropriate loading phrase
+    function chooseLoadingPhrase() {
+        var phrases = [
+            "warming up the toaster",
+            "communing with the spirit world",
+            "instructing the minions",
+            "hailing Starfleet Command",
+            "worrying the sheep",
+            "feeding the hamster"
+        ];
+        var rand = Math.floor(Math.random() * phrases.length);
+        return phrases[rand];
+    };
+
     // Splits the data into two sets ('main' and 'other') and adds labels.
     function splitData(rawData) {
         var main = [];
@@ -119,8 +133,14 @@
     };
 
     function update() {
+        $('#loading-phrase').text(chooseLoadingPhrase());
+        $('#loading').show();
+        $('#main-content').hide();
+
         $.getJSON("data")
             .done(function(d) {
+                $('#main-content').show();
+
                 updateSubtitle(d["user"], d["repo_count"]);
 
                 renderOverallTable(d["langs"]);
@@ -134,13 +154,18 @@
                     $('#other').show();
                 };
             })
-            .fail(function(jqxhr) {
-                var statusCode = jqxhr.status;
+            .fail(function(jqXHR) {
+                var statusCode = jqXHR.status;
                 if (statusCode == 500) {
                     message("The server encountered an error. Please try again later.");
                 } else if (statusCode == 403) {
-                    message('You do not appear to be authorized. Please try <a href="intro">logging in and authorizing again</a>.');
+                    message('You do not appear to be authorized (' + 
+                        jQuery.parseJSON(jqXHR.responseText).error + 
+                        '). You may need to try <a href="intro">logging in and authorizing again</a>.');
                 }
+            })
+            .always(function() {
+                $('#loading').hide();
             });
     };
 
@@ -148,19 +173,6 @@
     $(function() {
 
         update();
-        window.update = update;
-
-        // var raw = {{ langs | safe }};
-        // renderOverallTable(raw);
-
-        // var graphData = splitData(raw);
-        // var mainColoured = generateColours(graphData.main, false, true);
-        // renderGraph(mainColoured, $('#pie'), $('#legend'));
-        // if (graphData.other.length > 0) {
-        //     var otherColoured = generateColours(graphData.other, true, false);
-        //     renderGraph(otherColoured, $('#pie-other'), $('#legend-other'));
-        //     $('#other').show();
-        // };
 
     });
 

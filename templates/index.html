@@ -8,81 +8,87 @@
 
 {% block content %}
 
-<ul class="nav nav-tabs">
-    <li class="active"><a href="#charts" data-toggle="tab">Charts</a></li>
-    <li><a href="#table" data-toggle="tab">Table</a></li>
-</ul>
+<div id="loading" class="well">
+    <span class="glyphicon glyphicon-transfer"></span>
+    Please wait, we're just <span id="loading-phrase"></span>...
+</div>
 
+<div id="main-content" style="display:none">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#charts" data-toggle="tab">Charts</a></li>
+        <li><a href="#table" data-toggle="tab">Table</a></li>
+    </ul>
 
-<div class="tab-content">
-    <div class="tab-pane active" id="charts">
+    <div class="tab-content">
+        <div class="tab-pane active" id="charts">
 
-        <div class="row">
-            <div class="col-md-5">
-                <canvas id="pie" width="400" height="400"></canvas>
+            <div class="row">
+                <div class="col-md-5">
+                    <canvas id="pie" width="400" height="400"></canvas>
+                </div>
+
+                <div class="col-md-7">
+                    <table id="legend" class="table">
+                        <thead>
+                            <tr>
+                                <th>&nbsp;</th>
+                                <th>Language</th>
+                                <th>Percent</th>
+                                <th>Bytes</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
-            <div class="col-md-7">
-                <table id="legend" class="table">
-                    <thead>
-                        <tr>
-                            <th>&nbsp;</th>
-                            <th>Language</th>
-                            <th>Percent</th>
-                            <th>Bytes</th>
-                        </tr>
-                    </thead>
+            <div class="row" id="other" style="display:none">
+                <h3>Other</h3>
+                <p>This chart contains all the additional languages which 
+                constitute the 'other' section on the above chart. This is 
+                any language with a percentage below 0.5%, as its too small 
+                to render in a useful way above.</p>
 
-                    <tbody>
-                    </tbody>
-                </table>
+                <div class="col-md-4">
+                    <canvas id="pie-other" width="260" height="260"></canvas>
+                </div>
+                <div class="col-md-6">
+                    <table id="legend-other" class="table">
+                        <thead>
+                            <tr>
+                                <th>&nbsp;</th>
+                                <th>Language</th>
+                                <th>Percent</th>
+                                <th>Bytes</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
             </div>
+
         </div>
 
-        <div class="row" id="other" style="display:none">
-            <h3>Other</h3>
-            <p>This chart contains all the additional languages which 
-            constitute the 'other' section on the above chart. This is 
-            any language with a percentage below 0.5%, as its too small 
-            to render in a useful way above.</p>
+        <div class="tab-pane" id="table">
 
-            <div class="col-md-4">
-                <canvas id="pie-other" width="260" height="260"></canvas>
-            </div>
-            <div class="col-md-6">
-                <table id="legend-other" class="table">
-                    <thead>
-                        <tr>
-                            <th>&nbsp;</th>
-                            <th>Language</th>
-                            <th>Percent</th>
-                            <th>Bytes</th>
-                        </tr>
-                    </thead>
+            <table id="overall" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Language</th>
+                        <th>Percent</th>
+                        <th>Bytes</th>
+                    </tr>
+                </thead>
 
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
+                <tbody>
+                </tbody>
+            </table>
+
         </div>
-
-    </div>
-
-    <div class="tab-pane" id="table">
-
-        <table id="overall" class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Language</th>
-                    <th>Percent</th>
-                    <th>Bytes</th>
-                </tr>
-            </thead>
-
-            <tbody>
-            </tbody>
-        </table>
-
     </div>
 </div>
 

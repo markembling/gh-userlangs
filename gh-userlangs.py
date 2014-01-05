@@ -71,7 +71,6 @@ def data():
         session.pop('github_access_token', None)
         session.pop('github_user', None)
         return make_response(jsonify({'error': str(e)}), 403)
-        # flash("It looks like you have revoked access from your GitHub account. That's ok, but if you want to see your stats again, you'll need to re-authorize.")
 
 @app.route("/intro")
 def intro():
