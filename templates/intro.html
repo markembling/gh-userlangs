@@ -1,1 +1,18 @@
-<p>Introduction page goes here. <a href="{{ url_for("auth") }}">Auth me</a></p>
+{% extends "base.html" %}
+
+{% block subtitle %}Hi there, I don't believe we've met...?{% endblock %}
+
+{% block content %}
+<h3>What is this?</h3>
+<p>This is a small app which will connect to your GitHub account using the 
+GitHub API and give an overview of the languages you've used. GitHub (and their API) does a
+fantastic job on a per-repository basis, but there's no way of getting a feel for how it 
+looks across <em>all your repositories</em>.</p>
+
+<h3>Get Started</h3>
+<p>Simply click the button below to log in and authorize this app to use the API 
+on your behalf. It uses OAuth, so you'll see the permissions before granting them 
+and of course you can revoke the authorization at any time in your GitHub account settings.</p>
+
+<p><a href="{{ url_for("auth") }}" class="btn btn-primary btn-lg" role="button">Log in with GitHub</a></p>
+{% endblock %}

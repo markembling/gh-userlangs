@@ -3,7 +3,7 @@ import os
 import json
 from collections import OrderedDict
 from flask import Flask, request, session, render_template, redirect, url_for, flash
-from flask.ext.github import GitHub
+from flask.ext.github import GitHub, GitHubError
 
 # Config
 GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID')
@@ -52,14 +52,20 @@ def get_all_languages(repos):
 @app.route("/")
 def index():
     if not "github_access_token" in session:
-        redirect(url_for('intro'))
+        return redirect(url_for('intro'))
 
-    repos = get_gh_repos()
-    langs = get_all_languages(repos)
+    try:
+        repos = get_gh_repos()
+        langs = get_all_languages(repos)
 
-    return render_template("index.html", user=session["github_user"],
-                                         repos=repos,
-                                         langs=json.dumps(langs))
+        return render_template("index.html", user=session["github_user"],
+                                             repos=repos,
+                                             langs=json.dumps(langs))
+    except GitHubError:
+        session.pop('github_access_token', None)
+        session.pop('github_user', None)
+        flash("It looks like you have revoked access from your GitHub account. That's ok, but if you want to see your stats again, you'll need to re-authorize.")
+        return redirect(url_for("intro"))
 
 @app.route("/intro")
 def intro():
@@ -76,8 +82,8 @@ def auth():
 def callback(token):
     next_url = request.args.get('next') or url_for('index')
     if token is None:
-        flash("Authorization failed.")
-        return redirect(next_url)
+        flash("There was a problem authorizing.")
+        return redirect(url_for("intro"))
 
     session['github_access_token'] = token
     session['github_user'] = gh.get('user')["login"]
