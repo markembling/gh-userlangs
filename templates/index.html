@@ -4,6 +4,8 @@
 
 <p>{{ repos | length }} repositories.</p>
 
+<canvas id="pie" width="400" height="400"></canvas>
+
 <table>
     <thead>
         <tr>
@@ -21,5 +23,39 @@
         </tr>
     {% endfor %}
 </table>
+
+<script>
+
+function generateColours(total) {
+    var i = 360 / (total - 1);
+    var cols = [];
+    for (var x=0; x<total; x++) {
+        h = i * x;
+        s = 40 + Math.floor(Math.random()*21); // between 40 and 60
+        l = 50 + Math.floor(Math.random()*11); // between 50 and 60
+        cols.push("hsl(" + h + ", " + s + "%, "+ l + "%)");
+    }
+    return cols;
+}
+
+var ctx = $("#pie").get(0).getContext("2d");
+
+var raw = {{ langs | tojson | safe }};
+var cols = generateColours(Object.keys(raw).length);
+
+var count = 0;
+var data = $.map(raw, function(v, k) {
+    var r = { value: v, color: cols[count] };
+    count++;
+    return r;
+});
+var opts = {
+    segmentStrokeWidth: 1,
+    percentageInnerCutout: 40,
+    animateRotate: false
+};
+var pie = new Chart(ctx).Doughnut(data, opts);
+
+</script>
 
 {% endblock %}
