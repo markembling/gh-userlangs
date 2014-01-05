@@ -46,18 +46,22 @@ def get_language_percents(langs):
 # View functions
 @app.route("/")
 def index():
-    repo_count = None
-    langs = None
-    langs_percents = None
-    if "github_access_token" in session:
-        repos = get_gh_repos()
-        repo_count = len(repos)
-        langs = get_all_languages(repos)
-        langs_percents = get_language_percents(langs)
+    if not "github_access_token" in session:
+        redirect(url_for('intro'))
 
-    return render_template("index.html", repo_count=repo_count,
+    repos = get_gh_repos()
+    langs = get_all_languages(repos)
+    langs_percents = get_language_percents(langs)
+
+    return render_template("index.html", repos=repos,
                                          langs=langs,
                                          langs_percents=langs_percents)
+
+@app.route("/intro")
+def intro():
+    if "github_access_token" in session:
+        return redirect(url_for('index'))
+    return render_template("intro.html")
 
 @app.route("/auth")
 def auth():
