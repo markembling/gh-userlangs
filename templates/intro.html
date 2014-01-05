@@ -3,6 +3,8 @@
 {% block subtitle %}Hi there, I don't believe we've met...?{% endblock %}
 
 {% block content %}
+<img src="{{ url_for("static", filename="sample.png") }}" alt="" class="img-thumbnail pull-right">
+
 <h3>What is this?</h3>
 <p>This is a small app which will connect to your GitHub account using the 
 GitHub API and give an overview of the languages you've used. GitHub (and their API) does a
