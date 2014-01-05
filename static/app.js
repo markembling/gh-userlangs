@@ -2,11 +2,6 @@
 
     "use strict";
 
-    // Get data from the server
-    function getData() {
-
-    };
-
     // Splits the data into two sets ('main' and 'other') and adds labels.
     function splitData(rawData) {
         var main = [];
@@ -106,20 +101,56 @@
         });
     };
 
+    function message(text) {
+        var $warn = $('<div class="alert alert-warning"></div>');
+        $warn.html(text);
+        $warn.prepend('<a class="close" data-dismiss="alert" href="#" aria-hidden="true">&times;</a>');
+        $(".page-header").after($warn);
+    };
+
+    function update() {
+        $.getJSON("data")
+            .done(function(d) {
+                // TODO: update username, update repo count
+
+                renderOverallTable(d["langs"]);
+
+                var graphData = splitData(d["langs"]);
+                var mainColoured = generateColours(graphData.main, false, true);
+                renderGraph(mainColoured, $('#pie'), $('#legend'));
+                if (graphData.other.length > 0) {
+                    var otherColoured = generateColours(graphData.other, true, false);
+                    renderGraph(otherColoured, $('#pie-other'), $('#legend-other'));
+                    $('#other').show();
+                };
+            })
+            .fail(function(jqxhr) {
+                var statusCode = jqxhr.status;
+                if (statusCode == 500) {
+                    message("The server encountered an error. Please try again later.");
+                } else if (statusCode == 403) {
+                    message('You do not appear to be authorized. Please try <a href="intro">logging in and authorizing again</a>.');
+                }
+            });
+    };
+
     // Main
     $(function() {
 
-        var raw = {{ langs | safe }};
-        renderOverallTable(raw);
+        update();
+        window.update = update;
 
-        var graphData = splitData(raw);
-        var mainColoured = generateColours(graphData.main, false, true);
-        renderGraph(mainColoured, $('#pie'), $('#legend'));
-        if (graphData.other.length > 0) {
-            var otherColoured = generateColours(graphData.other, true, false);
-            renderGraph(otherColoured, $('#pie-other'), $('#legend-other'));
-            $('#other').show();
-        };
+        // var raw = {{ langs | safe }};
+        // renderOverallTable(raw);
+
+        // var graphData = splitData(raw);
+        // var mainColoured = generateColours(graphData.main, false, true);
+        // renderGraph(mainColoured, $('#pie'), $('#legend'));
+        // if (graphData.other.length > 0) {
+        //     var otherColoured = generateColours(graphData.other, true, false);
+        //     renderGraph(otherColoured, $('#pie-other'), $('#legend-other'));
+        //     $('#other').show();
+        // };
 
     });
 

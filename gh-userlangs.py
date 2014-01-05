@@ -2,7 +2,8 @@ from __future__ import division
 import os
 import json
 from collections import OrderedDict
-from flask import Flask, request, session, render_template, redirect, url_for, flash
+from flask import (Flask, request, session, render_template, jsonify, 
+                   redirect, url_for, flash, make_response)
 from flask.ext.github import GitHub, GitHubError
 
 # Config
@@ -52,20 +53,25 @@ def get_all_languages(repos):
 @app.route("/")
 def index():
     if not "github_access_token" in session:
-        returnredirect(url_for('intro'))
+        return redirect(url_for('intro'))
+    return render_template("index.html")
+
+@app.route("/data")
+def data():
+    if not "github_access_token" in session:
+        return make_response(jsonify({'error': 'No access token.'}), 403)
 
     try:
         repos = get_gh_repos()
         langs = get_all_languages(repos)
-
-        return render_template("index.html", user=session["github_user"],
-                                             repos=repos,
-                                             langs=json.dumps(langs))
-    except GitHubError:
+        return jsonify(user=session["github_user"],
+                       repo_count=len(repos),
+                       langs=langs)
+    except GitHubError, e:
         session.pop('github_access_token', None)
         session.pop('github_user', None)
-        flash("It looks like you have revoked access from your GitHub account. That's ok, but if you want to see your stats again, you'll need to re-authorize.")
-        return redirect(url_for("intro"))
+        return make_response(jsonify({'error': str(e)}), 403)
+        # flash("It looks like you have revoked access from your GitHub account. That's ok, but if you want to see your stats again, you'll need to re-authorize.")
 
 @app.route("/intro")
 def intro():
