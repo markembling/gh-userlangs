@@ -9,7 +9,7 @@ from flask.ext.github import GitHub, GitHubError
 # Config
 GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID')
 GITHUB_CLIENT_SECRET = os.environ.get('GITHUB_CLIENT_SECRET')
-GITHUB_CALLBACK_URL = 'http://localhost:5000/callback'
+GITHUB_CALLBACK_URL = os.environ.get('ROOT_URL') + "callback"
 
 app = Flask(__name__)
 app.config.from_object(__name__)
