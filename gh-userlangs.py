@@ -2,7 +2,7 @@ from __future__ import division
 import os
 import json
 from collections import OrderedDict
-from flask import Flask, request, session, render_template, redirect, url_for
+from flask import Flask, request, session, render_template, redirect, url_for, flash
 from flask.ext.github import GitHub
 
 # Config
@@ -57,7 +57,8 @@ def index():
     repos = get_gh_repos()
     langs = get_all_languages(repos)
 
-    return render_template("index.html", repos=repos,
+    return render_template("index.html", user=session["github_user"],
+                                         repos=repos,
                                          langs=json.dumps(langs))
 
 @app.route("/intro")
@@ -75,11 +76,11 @@ def auth():
 def callback(token):
     next_url = request.args.get('next') or url_for('index')
     if token is None:
-        #flash("Authorization failed.")
-        #return redirect(next_url)
-        return "Authorization failed"
+        flash("Authorization failed.")
+        return redirect(next_url)
 
     session['github_access_token'] = token
+    session['github_user'] = gh.get('user')["login"]
     return redirect(next_url)
 
 # Temporary testing function to see the current auth token
