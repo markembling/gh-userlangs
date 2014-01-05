@@ -22,7 +22,7 @@ def token_getter():
 
 # GitHub functions
 def get_gh_repos():
-    return gh.get('user/repos')
+    return sorted(gh.get('user/repos'), key=lambda x: x["name"])
 
 def get_repo_languages(repo):
     return gh.get('repos/%s/%s/languages' % (repo["owner"]["login"], repo["name"]))
@@ -38,8 +38,10 @@ def get_all_languages(repos):
             if not k in results:
                 results[k] = {}
                 results[k]["bytes"] = v
+                results[k]["repos"] = [r["name"]]
             else:
                 results[k]["bytes"] += v
+                results[k]["repos"].append(r["name"])
             total_bytes += v
 
     # Calculate percentages

@@ -5,12 +5,13 @@
     // Get an appropriate loading phrase
     function chooseLoadingPhrase() {
         var phrases = [
+            "stroking the octocat",
             "warming up the toaster",
             "communing with the spirit world",
             "instructing the minions",
             "hailing Starfleet Command",
             "worrying the sheep",
-            "feeding the hamster"
+            "feeding the octocat"
         ];
         var rand = Math.floor(Math.random() * phrases.length);
         return phrases[rand];
@@ -85,14 +86,20 @@
         for (var key in data) {
             var vals = data[key];
 
+
             var $tbody = $('#overall tbody');
 
             var $row = $("<tr></tr>");
             $row.append("<td>" + key + "</td>")
-            .append("<td>" + vals["percent"].toFixed(3) + "%</td>")
-            .append("<td>" + vals["bytes"] + "</td>")
+                .append("<td>" + vals["percent"].toFixed(3) + "%</td>")
+                .append("<td>" + vals["bytes"] + "</td>")
+                .append('<td><span class="tip" data-toggle="tooltip" title="' + vals["repos"].join(",<br>") + '">' + 
+                    vals["repos"].length + (vals["repos"].length == 1 ? " repository" : " repositories") + 
+                    "</span></td>")
 
             $tbody.append($row);
+
+            $('.tip').tooltip({html: true});
         }
     };
 

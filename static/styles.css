@@ -12,3 +12,8 @@
     margin-top: -6px;
     margin-right: 8px;
 }
+
+.tip {
+    cursor: help;
+    border-bottom: solid 1px #DDD;
+}
