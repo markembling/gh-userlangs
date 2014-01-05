@@ -1,0 +1,21 @@
+<p>Introduction page goes here. <a href="{{ url_for("auth") }}">Auth me</a></p>
+<hr>
+<p>{{ repo_count }} repositories.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Language</th>
+            <th>Percent</th>
+            <th>Bytes</th>
+        </tr>
+    </thead>
+
+    {% for lang in langs | dictsort %}
+        <tr>
+            <td>{{ lang[0] }}</td>
+            <td>{{ "%0.2f%%"  | format(langs_percents[lang[0]]) }}</td>
+            <td>{{ lang[1] }}</td>
+        </tr>
+    {% endfor %}
+</table>
